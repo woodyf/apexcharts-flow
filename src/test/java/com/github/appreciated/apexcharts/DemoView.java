@@ -1,29 +1,42 @@
 package com.github.appreciated.apexcharts;
 
-import com.github.appreciated.apexcharts.examples.ExampleChartGenerator;
+import com.github.appreciated.apexcharts.config.builder.ChartBuilder;
+import com.github.appreciated.apexcharts.config.builder.LegendBuilder;
+import com.github.appreciated.apexcharts.config.builder.ResponsiveBuilder;
+import com.github.appreciated.apexcharts.config.builder.TitleSubtitleBuilder;
+import com.github.appreciated.apexcharts.config.chart.Type;
+import com.github.appreciated.apexcharts.config.legend.Position;
+import com.github.appreciated.apexcharts.config.responsive.builder.OptionsBuilder;
 import com.vaadin.flow.component.orderedlayout.HorizontalLayout;
 import com.vaadin.flow.component.orderedlayout.VerticalLayout;
 import com.vaadin.flow.router.Route;
 
-import java.util.Arrays;
-
 @Route("")
 public class DemoView extends HorizontalLayout {
-    VerticalLayout left = new VerticalLayout();
-    VerticalLayout right = new VerticalLayout();
+	final VerticalLayout main = new VerticalLayout();
 
-    public DemoView() {
-        Arrays.stream(ExampleChartGenerator.getCharts()).map(ApexChartsBuilder::build).forEach(left::add);
-        Arrays.stream(ExampleChartGenerator.getColoredCharts()).map(ApexChartsBuilder::build).forEach(right::add);
-        setSizeFull();
-        getStyle()
-                .set("overflow", "auto");
-        setSizeUndefined();
-        add(left, right);
-        left.setHeight("unset");
-        left.setWidth("50%");
-        right.setWidth("50%");
-        right.setHeight("unset");
-    }
+	public DemoView() {
+		final String[] labels = { "Team A", "Team B", "Team C", "Team D", "Team E" };
+		
+		final ApexChartsBuilder acb = new ApexChartsBuilder().withChart(ChartBuilder.get().withType(Type.pie).build())
+				.withLabels(labels).withLegend(LegendBuilder.get().withPosition(Position.right).build())
+				.withSeries(44.0, 55.0, 13.0, 43.0, 22.0)
+				.withResponsive(ResponsiveBuilder.get().withBreakpoint(480.0)
+						.withOptions(OptionsBuilder.get()
+								.withLegend(LegendBuilder.get().withPosition(Position.bottom).build()).build())
+						.build())
+				.withTitle(TitleSubtitleBuilder.get().withText("DEMO").build());
+		final ApexCharts chart = acb.build();
+		
+		chart.setHandleClickOnIndex(idx -> System.out.println(labels[idx] + " clicked"));
+		main.add(chart);
+
+		setSizeFull();
+		getStyle().set("overflow", "auto");
+		setSizeUndefined();
+		add(main);
+		main.setHeight("unset");
+		main.setWidth("100%");
+	}
 
 }

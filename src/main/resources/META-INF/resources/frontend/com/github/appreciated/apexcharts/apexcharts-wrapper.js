@@ -124,7 +124,10 @@ class ApexChartsWrapper extends PolymerElement {
             this.config.annotations = JSON.parse(this.annotations);
         }
         if (this.chart) {
-            this.config.chart = JSON.parse(this.chart);
+            this.config.chart = this.config.chart = {
+                    ...JSON.parse(this.chart),
+                    events: { dataPointSelection: this.handleDataPointClick.bind(this) },
+            };
         }
         if (this.series) {
             this.config.series = JSON.parse(this.series);
@@ -244,6 +247,12 @@ class ApexChartsWrapper extends PolymerElement {
         if (this.debug) {
             console.log(this.config);
         }
+    }
+    
+    handleDataPointClick(e, ctx, conf) {
+    	const { dataPointIndex } = conf;
+    	console.log('sending dataPointIndex', dataPointIndex, 'to server');
+    	this.$server.onDataPointClick(dataPointIndex);
     }
 
     /**

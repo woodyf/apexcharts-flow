@@ -1,10 +1,30 @@
 package com.github.appreciated.apexcharts;
 
+import java.util.Arrays;
+import java.util.function.IntConsumer;
+
 import com.fasterxml.jackson.annotation.JsonInclude;
 import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
-import com.github.appreciated.apexcharts.config.*;
+import com.github.appreciated.apexcharts.config.Annotations;
+import com.github.appreciated.apexcharts.config.Chart;
+import com.github.appreciated.apexcharts.config.DataLabels;
+import com.github.appreciated.apexcharts.config.Fill;
+import com.github.appreciated.apexcharts.config.Grid;
+import com.github.appreciated.apexcharts.config.Legend;
+import com.github.appreciated.apexcharts.config.Markers;
+import com.github.appreciated.apexcharts.config.NoData;
+import com.github.appreciated.apexcharts.config.PlotOptions;
+import com.github.appreciated.apexcharts.config.Responsive;
+import com.github.appreciated.apexcharts.config.States;
+import com.github.appreciated.apexcharts.config.Stroke;
+import com.github.appreciated.apexcharts.config.Theme;
+import com.github.appreciated.apexcharts.config.TitleSubtitle;
+import com.github.appreciated.apexcharts.config.Tooltip;
+import com.github.appreciated.apexcharts.config.XAxis;
+import com.github.appreciated.apexcharts.config.YAxis;
 import com.github.appreciated.apexcharts.helper.Series;
+import com.vaadin.flow.component.ClientCallable;
 import com.vaadin.flow.component.HasSize;
 import com.vaadin.flow.component.HasStyle;
 import com.vaadin.flow.component.HasTheme;
@@ -14,8 +34,6 @@ import com.vaadin.flow.component.dependency.JsModule;
 import com.vaadin.flow.component.dependency.NpmPackage;
 import com.vaadin.flow.component.polymertemplate.PolymerTemplate;
 
-import java.util.Arrays;
-
 @Tag("apex-charts-wrapper")
 @NpmPackage(value = "apexcharts", version = "3.17.0")
 @NpmPackage(value = "onecolor", version = "3.1.0")
@@ -23,7 +41,8 @@ import java.util.Arrays;
 @CssImport(value = "./com/github/appreciated/apexcharts/apexcharts-wrapper-styles.css", id = "apex-charts-style")
 public class ApexCharts extends PolymerTemplate<ApexChartsModel> implements HasSize, HasStyle, HasTheme {
     private ObjectMapper objectMapper;
-
+    private transient IntConsumer handleClickOnIndex;
+    
     public ApexCharts() {
         this.objectMapper = new ObjectMapper().setSerializationInclusion(JsonInclude.Include.NON_NULL);
     }
@@ -218,5 +237,14 @@ public class ApexCharts extends PolymerTemplate<ApexChartsModel> implements HasS
     public void setObjectMapper(ObjectMapper objectMapper) {
         this.objectMapper = objectMapper;
     }
+    
+    @ClientCallable
+	private void onDataPointClick(int index) {
+		handleClickOnIndex.accept(index);
+	}
+
+	public void setHandleClickOnIndex(IntConsumer handleClickOnIndex) {
+		this.handleClickOnIndex = handleClickOnIndex;
+	}
 }
 
